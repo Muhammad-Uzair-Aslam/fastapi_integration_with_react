@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 interface UserData {
   name: string;
   email: string;
@@ -50,33 +49,39 @@ const UpdatePage: React.FC = () => {
   const navigate = useNavigate();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [formData, setFormData] = useState<UserData | null>(null);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
 
   useEffect(() => {
-    const storedData = localStorage.getItem('userData');
+    const storedData = localStorage.getItem("userData");
     if (storedData) {
       try {
         const parsedData = JSON.parse(storedData);
-        console.log('UpdatePage: Loaded userData from localStorage', parsedData);
+        console.log(
+          "UpdatePage: Loaded userData from localStorage",
+          parsedData
+        );
         setUserData(parsedData);
         setFormData(parsedData);
       } catch (err) {
-        console.error('UpdatePage: Failed to parse userData from localStorage', err);
-        setError('Failed to load user data. Please try again.');
+        console.error(
+          "UpdatePage: Failed to parse userData from localStorage",
+          err
+        );
+        setError("Failed to load user data. Please try again.");
       }
     } else {
-      console.log('UpdatePage: No userData found in localStorage');
-      setError('No user data found. Please log in again.');
-      localStorage.removeItem('token');
-      navigate('/login', { replace: true });
+      console.log("UpdatePage: No userData found in localStorage");
+      setError("No user data found. Please log in again.");
+      localStorage.removeItem("token");
+      navigate("/login", { replace: true });
     }
   }, [navigate]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => prev ? { ...prev, [name]: value } : null);
+    setFormData((prev) => (prev ? { ...prev, [name]: value } : null));
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,27 +95,30 @@ const UpdatePage: React.FC = () => {
     if (!formData) return;
 
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) throw new Error('No token found. Please log in again.');
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("No token found. Please log in again.");
 
       // Upload photo if a new one is selected
       if (photoFile) {
         const photoFormData = new FormData();
-        photoFormData.append('file', photoFile);
+        photoFormData.append("file", photoFile);
         const photoResponse = await axios.post(
-          'http://localhost:8000/auth/user/upload-photo',
+          "http://localhost:8000/auth/user/upload-photo",
           photoFormData,
           {
             headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'multipart/form-data',
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
             },
           }
         );
-        console.log('UpdatePage: Photo uploaded successfully', photoResponse.data);
+        console.log(
+          "UpdatePage: Photo uploaded successfully",
+          photoResponse.data
+        );
         if (formData) {
           formData.imageUrl = photoResponse.data.profilephoto;
         }
@@ -120,7 +128,7 @@ const UpdatePage: React.FC = () => {
       const updateData = {
         fullName: formData.name,
         DateOfBirth: formData.birthDate,
-        maritalStatus: formData.maritalStatus || '',
+        maritalStatus: formData.maritalStatus || "",
         education: formData.education,
         phoneNumber: formData.mobile,
         address: formData.address,
@@ -130,23 +138,24 @@ const UpdatePage: React.FC = () => {
         accountNumber: formData.accountNumber,
         accountIbn: formData.ibanNumber,
         accountType: formData.accountType,
-        nationality: formData.nationality || '',
-        dualNational: formData.dualNational || '',
-        countryOfBirth: formData.countryOfBirth || '',
-        cityOfBirth: formData.cityOfBirth || '',
-        countryOfResidence: formData.countryOfResidence || '',
-        customerVisuallyImpaired: formData.customerVisuallyImpaired || '',
-        nicIssueDate: formData.nicIssueDate || '',
-        nicExpiryDate: formData.nicExpiryDate || '',
-        motherMaidenName: formData.motherMaidenName || '',
-        husbandName: formData.husbandName || '',
-        citizenTaxResidenceOtherThanPakistan: formData.citizenTaxResidenceOtherThanPakistan || '',
-        pep: formData.pep || '',
-        permanentCity: formData.permanentCity || '',
-        typeOfAddress: formData.typeOfAddress || '',
-        nextOfKinName: formData.nextOfKinName || '',
-        nextOfKinRelation: formData.nextOfKinRelation || '',
-        nextOfKinPhoneNumber: formData.nextOfKinPhoneNumber || '',
+        nationality: formData.nationality || "",
+        dualNational: formData.dualNational || "",
+        countryOfBirth: formData.countryOfBirth || "",
+        cityOfBirth: formData.cityOfBirth || "",
+        countryOfResidence: formData.countryOfResidence || "",
+        customerVisuallyImpaired: formData.customerVisuallyImpaired || "",
+        nicIssueDate: formData.nicIssueDate || "",
+        nicExpiryDate: formData.nicExpiryDate || "",
+        motherMaidenName: formData.motherMaidenName || "",
+        husbandName: formData.husbandName || "",
+        citizenTaxResidenceOtherThanPakistan:
+          formData.citizenTaxResidenceOtherThanPakistan || "",
+        pep: formData.pep || "",
+        permanentCity: formData.permanentCity || "",
+        typeOfAddress: formData.typeOfAddress || "",
+        nextOfKinName: formData.nextOfKinName || "",
+        nextOfKinRelation: formData.nextOfKinRelation || "",
+        nextOfKinPhoneNumber: formData.nextOfKinPhoneNumber || "",
         facebook: formData.facebook,
         linkedIn: formData.linkedin,
         skype: formData.skype,
@@ -154,31 +163,34 @@ const UpdatePage: React.FC = () => {
       };
 
       const response = await axios.put(
-        'http://localhost:8000/auth/user',
+        "http://localhost:8000/auth/user",
         updateData,
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
         }
       );
-      console.log('UpdatePage: User data updated successfully', response.data);
+      console.log("UpdatePage: User data updated successfully", response.data);
 
       // Update localStorage with new user data
       const updatedUserData = { ...formData };
-      localStorage.setItem('userData', JSON.stringify(updatedUserData));
-      navigate('/home');
+      localStorage.setItem("userData", JSON.stringify(updatedUserData));
+      navigate("/home");
     } catch (err: any) {
-      console.error('UpdatePage: Failed to update user data', err);
-      setError(err.response?.data?.detail || 'Failed to update profile. Please try again.');
+      console.error("UpdatePage: Failed to update user data", err);
+      setError(
+        err.response?.data?.detail ||
+          "Failed to update profile. Please try again."
+      );
     } finally {
       setLoading(false);
     }
   };
 
   const handleCancel = () => {
-    navigate('/home');
+    navigate("/home");
   };
 
   if (error) {
@@ -213,12 +225,14 @@ const UpdatePage: React.FC = () => {
         <form onSubmit={handleSubmit}>
           <div className="mb-4 flex items-center space-x-4">
             <img
-              src={formData.imageUrl || 'https://via.placeholder.com/128'}
+              src={formData.imageUrl || "https://via.placeholder.com/128"}
               alt="Profile"
               className="w-16 h-16 rounded-full object-cover"
             />
             <div>
-              <label className="block text-sm font-medium text-gray-700">Change Photo</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Change Photo
+              </label>
               <input
                 type="file"
                 accept="image/*"
@@ -229,7 +243,9 @@ const UpdatePage: React.FC = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Full Name</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Full Name
+              </label>
               <input
                 type="text"
                 name="name"
@@ -239,7 +255,9 @@ const UpdatePage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Email</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Email
+              </label>
               <input
                 type="email"
                 name="email"
@@ -249,7 +267,9 @@ const UpdatePage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">CNIC</label>
+              <label className="block text-sm font-medium text-gray-700">
+                CNIC
+              </label>
               <input
                 type="text"
                 name="cnic"
@@ -259,7 +279,9 @@ const UpdatePage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Education</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Education
+              </label>
               <input
                 type="text"
                 name="education"
@@ -269,7 +291,9 @@ const UpdatePage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Rank Title</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Rank Title
+              </label>
               <input
                 type="text"
                 name="rankTitle"
@@ -279,7 +303,9 @@ const UpdatePage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Job Type</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Job Type
+              </label>
               <input
                 type="text"
                 name="jobType"
@@ -289,7 +315,9 @@ const UpdatePage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Joining Date</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Joining Date
+              </label>
               <input
                 type="text"
                 name="joiningDate"
@@ -299,7 +327,9 @@ const UpdatePage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Date of Birth
+              </label>
               <input
                 type="text"
                 name="birthDate"
@@ -309,7 +339,9 @@ const UpdatePage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Phone Number</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Phone Number
+              </label>
               <input
                 type="text"
                 name="mobile"
@@ -319,7 +351,9 @@ const UpdatePage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Address</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Address
+              </label>
               <input
                 type="text"
                 name="address"
@@ -329,7 +363,9 @@ const UpdatePage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Gender</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Gender
+              </label>
               <input
                 type="text"
                 name="gender"
@@ -339,7 +375,9 @@ const UpdatePage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Experience</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Experience
+              </label>
               <input
                 type="text"
                 name="experience"
@@ -349,7 +387,9 @@ const UpdatePage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Bank Name</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Bank Name
+              </label>
               <input
                 type="text"
                 name="bankName"
@@ -359,7 +399,9 @@ const UpdatePage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Account Holder Name</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Account Holder Name
+              </label>
               <input
                 type="text"
                 name="accountHolderName"
@@ -369,7 +411,9 @@ const UpdatePage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Branch Code</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Branch Code
+              </label>
               <input
                 type="text"
                 name="branchCode"
@@ -379,7 +423,9 @@ const UpdatePage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Account Number</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Account Number
+              </label>
               <input
                 type="text"
                 name="accountNumber"
@@ -389,7 +435,9 @@ const UpdatePage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">IBAN Number</label>
+              <label className="block text-sm font-medium text-gray-700">
+                IBAN Number
+              </label>
               <input
                 type="text"
                 name="ibanNumber"
@@ -399,7 +447,9 @@ const UpdatePage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Account Type</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Account Type
+              </label>
               <input
                 type="text"
                 name="accountType"
@@ -409,7 +459,9 @@ const UpdatePage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">LinkedIn</label>
+              <label className="block text-sm font-medium text-gray-700">
+                LinkedIn
+              </label>
               <input
                 type="text"
                 name="linkedin"
@@ -419,7 +471,9 @@ const UpdatePage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Facebook</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Facebook
+              </label>
               <input
                 type="text"
                 name="facebook"
@@ -429,7 +483,9 @@ const UpdatePage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">GitHub</label>
+              <label className="block text-sm font-medium text-gray-700">
+                GitHub
+              </label>
               <input
                 type="text"
                 name="github"
@@ -439,7 +495,9 @@ const UpdatePage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Skype</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Skype
+              </label>
               <input
                 type="text"
                 name="skype"
@@ -449,181 +507,217 @@ const UpdatePage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Marital Status</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Marital Status
+              </label>
               <input
                 type="text"
                 name="maritalStatus"
-                value={formData.maritalStatus || ''}
+                value={formData.maritalStatus || ""}
                 onChange={handleInputChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Nationality</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Nationality
+              </label>
               <input
                 type="text"
                 name="nationality"
-                value={formData.nationality || ''}
+                value={formData.nationality || ""}
                 onChange={handleInputChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Dual National</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Dual National
+              </label>
               <input
                 type="text"
                 name="dualNational"
-                value={formData.dualNational || ''}
+                value={formData.dualNational || ""}
                 onChange={handleInputChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Country of Birth</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Country of Birth
+              </label>
               <input
                 type="text"
                 name="countryOfBirth"
-                value={formData.countryOfBirth || ''}
+                value={formData.countryOfBirth || ""}
                 onChange={handleInputChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">City of Birth</label>
+              <label className="block text-sm font-medium text-gray-700">
+                City of Birth
+              </label>
               <input
                 type="text"
                 name="cityOfBirth"
-                value={formData.cityOfBirth || ''}
+                value={formData.cityOfBirth || ""}
                 onChange={handleInputChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Country of Residence</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Country of Residence
+              </label>
               <input
                 type="text"
                 name="countryOfResidence"
-                value={formData.countryOfResidence || ''}
+                value={formData.countryOfResidence || ""}
                 onChange={handleInputChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Visually Impaired</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Visually Impaired
+              </label>
               <input
                 type="text"
                 name="customerVisuallyImpaired"
-                value={formData.customerVisuallyImpaired || ''}
+                value={formData.customerVisuallyImpaired || ""}
                 onChange={handleInputChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">NIC Issue Date</label>
+              <label className="block text-sm font-medium text-gray-700">
+                NIC Issue Date
+              </label>
               <input
                 type="text"
                 name="nicIssueDate"
-                value={formData.nicIssueDate || ''}
+                value={formData.nicIssueDate || ""}
                 onChange={handleInputChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">NIC Expiry Date</label>
+              <label className="block text-sm font-medium text-gray-700">
+                NIC Expiry Date
+              </label>
               <input
                 type="text"
                 name="nicExpiryDate"
-                value={formData.nicExpiryDate || ''}
+                value={formData.nicExpiryDate || ""}
                 onChange={handleInputChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Mother's Maiden Name</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Mother's Maiden Name
+              </label>
               <input
                 type="text"
                 name="motherMaidenName"
-                value={formData.motherMaidenName || ''}
+                value={formData.motherMaidenName || ""}
                 onChange={handleInputChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Husband's Name</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Husband's Name
+              </label>
               <input
                 type="text"
                 name="husbandName"
-                value={formData.husbandName || ''}
+                value={formData.husbandName || ""}
                 onChange={handleInputChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Tax Residence Other Than Pakistan</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Tax Residence Other Than Pakistan
+              </label>
               <input
                 type="text"
                 name="citizenTaxResidenceOtherThanPakistan"
-                value={formData.citizenTaxResidenceOtherThanPakistan || ''}
+                value={formData.citizenTaxResidenceOtherThanPakistan || ""}
                 onChange={handleInputChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">PEP</label>
+              <label className="block text-sm font-medium text-gray-700">
+                PEP
+              </label>
               <input
                 type="text"
                 name="pep"
-                value={formData.pep || ''}
+                value={formData.pep || ""}
                 onChange={handleInputChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Permanent City</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Permanent City
+              </label>
               <input
                 type="text"
                 name="permanentCity"
-                value={formData.permanentCity || ''}
+                value={formData.permanentCity || ""}
                 onChange={handleInputChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Type of Address</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Type of Address
+              </label>
               <input
                 type="text"
                 name="typeOfAddress"
-                value={formData.typeOfAddress || ''}
+                value={formData.typeOfAddress || ""}
                 onChange={handleInputChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Next of Kin Name</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Next of Kin Name
+              </label>
               <input
                 type="text"
                 name="nextOfKinName"
-                value={formData.nextOfKinName || ''}
+                value={formData.nextOfKinName || ""}
                 onChange={handleInputChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Next of Kin Relation</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Next of Kin Relation
+              </label>
               <input
                 type="text"
                 name="nextOfKinRelation"
-                value={formData.nextOfKinRelation || ''}
+                value={formData.nextOfKinRelation || ""}
                 onChange={handleInputChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Next of Kin Phone Number</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Next of Kin Phone Number
+              </label>
               <input
                 type="text"
                 name="nextOfKinPhoneNumber"
-                value={formData.nextOfKinPhoneNumber || ''}
+                value={formData.nextOfKinPhoneNumber || ""}
                 onChange={handleInputChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
@@ -633,9 +727,13 @@ const UpdatePage: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`py-2 px-4 rounded-md text-white font-semibold ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
+              className={`py-2 px-4 rounded-md text-white font-semibold ${
+                loading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700"
+              }`}
             >
-              {loading ? 'Saving...' : 'Save'}
+              {loading ? "Saving..." : "Save"}
             </button>
             <button
               type="button"
@@ -650,5 +748,4 @@ const UpdatePage: React.FC = () => {
     </div>
   );
 };
-
 export default UpdatePage;
